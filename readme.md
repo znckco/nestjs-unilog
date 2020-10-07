@@ -9,6 +9,7 @@
 [![NPM](https://img.shields.io/npm/v/nestjs-unilog)](https://www.npmjs.com/package/nestjs-unilog)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 [![CI](https://github.com/znckco/nestjs-unilog/workflows/CI/badge.svg)](https://github.com/znckco/nestjs-unilog/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/znckco/nestjs-unilog/branch/master/graph/badge.svg)](https://codecov.io/gh/znckco/nestjs-unilog)
 
 </p>
 
