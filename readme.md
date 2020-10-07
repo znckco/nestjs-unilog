@@ -15,7 +15,7 @@
 
 ## Description
 
-Unilog is request context logger for NestJS which support typeorm too.
+Unilog is request context logger for NestJS.
 
 ## Installation
 
