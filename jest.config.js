@@ -6,4 +6,5 @@ module.exports = {
     prefix: "<rootDir>/",
   }),
   collectCoverageFrom: ["src/**/*.ts"],
+  setupFilesAfterEnv: ["jest-expect-message"],
 }

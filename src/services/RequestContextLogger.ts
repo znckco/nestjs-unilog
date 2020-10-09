@@ -15,6 +15,7 @@ import {
   Inject,
   Injectable,
   LoggerService,
+  LogLevel,
   OnApplicationShutdown,
 } from "@nestjs/common"
 import type { Namespace } from "cls-hooked"
@@ -47,7 +48,6 @@ export class RequestContextLogger
     return this.namespace.get(TL_ACCUMULATOR)
   }
 
-
   /**
    * @private
    */
@@ -66,6 +66,10 @@ export class RequestContextLogger
       trace: [],
       typeorm: { query: [], slowQuery: [] },
     }
+  }
+
+  setLogLevel(level: pino.LevelWithSilent) {
+    this.pino.level = level
   }
 
   extendBindings(bindings: object) {

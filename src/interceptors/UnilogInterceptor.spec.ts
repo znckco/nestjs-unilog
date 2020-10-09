@@ -25,7 +25,7 @@ describe("UnilogInterceptor", () => {
     }),
   }
   const call = {
-    handle: () => from([null]),
+    handle: () => from(Promise.resolve(42)),
   }
 
   afterEach(() => {
@@ -48,7 +48,9 @@ describe("UnilogInterceptor", () => {
     const requestLogger = { [Symbol.for("test")]: true }
     const requestAccumulator = { [Symbol.for("test")]: true }
     logger._createRequestLogger.mockImplementation(() => requestLogger)
-    logger._createRequestAccumulator.mockImplementation(() => requestAccumulator)
+    logger._createRequestAccumulator.mockImplementation(
+      () => requestAccumulator,
+    )
     const interceptor = new UnilogInterceptor(namespace as any, logger as any)
 
     await interceptor.intercept(execution as any, call).toPromise()
@@ -63,9 +65,32 @@ describe("UnilogInterceptor", () => {
   test("flushes accumulated logs", async () => {
     const interceptor = new UnilogInterceptor(namespace as any, logger as any)
 
-    await interceptor.intercept(execution as any, call).toPromise()
+    await expect(
+      interceptor.intercept(execution as any, call).toPromise(),
+      "should not consume result",
+    ).resolves.toBe(42)
 
     expect(logger._flush).toBeCalledTimes(1)
+  })
+
+  test("flushes on error", async () => {
+    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const call = { handle: () => from(Promise.reject(new Error("some error"))) }
+
+    await expect(
+      interceptor.intercept(execution as any, call).toPromise(),
+      "should not consume error",
+    ).rejects.toThrow()
+
+    expect(logger._flush).toBeCalledTimes(1)
+    expect(logger._flush).toBeCalledWith(
+      expect.objectContaining({
+        exception: {
+          message: "some error",
+          stack: expect.any(String),
+        },
+      }),
+    )
   })
 
   test("collect request method and path for fastify", async () => {
@@ -120,7 +145,7 @@ describe("UnilogInterceptor", () => {
     } as any
     const context = [Symbol.for("RPC")]
     const rpc = {
-      getContext: () => context
+      getContext: () => context,
     } as any
 
     jest.spyOn(execution, "switchToHttp").mockImplementation(() => http)

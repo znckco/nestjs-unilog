@@ -7,5 +7,10 @@ export const TL_LOGGER = "Logger"
 export const TL_ACCUMULATOR = "Accumulator"
 
 export const OPTIONS: UnilogOptions = {
-  pino: {},
+  pino: {
+    level:
+      process.env.NODE_ENV === "production"
+        ? /* istanbul ignore next */ "warn"
+        : "trace",
+  },
 }

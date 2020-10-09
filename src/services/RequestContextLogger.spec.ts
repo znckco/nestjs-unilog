@@ -136,4 +136,23 @@ describe("RequestContextLogger", () => {
     expect(spy).toHaveBeenCalledTimes(1)
     expect(logs).toHaveLength(1)
   })
+
+  test("change level", () => {
+    service.log("default trace level")
+    expect(logs).toHaveLength(1)
+
+    service.setLogLevel("warn")
+    service.log("after changing to warn")
+    expect(logs).toHaveLength(1)
+    service.warn("but warn goes through")
+    expect(logs).toHaveLength(2)
+
+    service.setLogLevel("trace")
+    service.log("after changing back to warn")
+    expect(logs).toHaveLength(3)
+
+    service.setLogLevel("silent")
+    service.error("nothing goes through")
+    expect(logs).toHaveLength(3)
+  })
 })

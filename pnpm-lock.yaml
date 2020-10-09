@@ -12,6 +12,7 @@ devDependencies:
   '@rollup/plugin-typescript': 6.0.0_cdbdda34bbbc534f7b00e9e97d2f15aa
   '@types/cls-hooked': 4.3.1
   '@types/express': 4.17.8
+  '@types/jest-expect-message': 1.0.2
   '@types/node': 14.11.4
   '@types/pino': 6.3.2
   '@types/supertest': 2.0.10
@@ -30,6 +31,7 @@ devDependencies:
   fastify: 3.5.1
   husky: 4.3.0
   jest: 26.5.0
+  jest-expect-message: 1.0.2
   lint-staged: 10.4.0
   prettier: 2.1.2
   rollup: 2.28.2
@@ -528,7 +530,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.3
       '@types/istanbul-reports': 1.1.2
-      '@types/yargs': 15.0.7
+      '@types/yargs': 15.0.8
       chalk: 3.0.0
     dev: true
     engines:
@@ -792,6 +794,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-nwKNbvnwJ2/mndE9ItP/zc2TCzw6uuodnF4EHYWD+gCQDVBuRQL5UzbZD0/ezy1iKsFU2ZQiDqg4M9dN4+wZgA==
+  /@types/jest-expect-message/1.0.2:
+    dependencies:
+      '@types/jest': 26.0.14
+    dev: true
+    resolution:
+      integrity: sha512-a6En2I1lLW0oW1FmukuPR056n+zGBN6CIctrQN9znBrC+6/GsBRg1ICtZUzHtRn9U0hd4vXjRMd2D2BMefMy2Q==
   /@types/jest/26.0.14:
     dependencies:
       jest-diff: 25.5.0
@@ -889,6 +897,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Gf4u3EjaPNcC9cTu4/j2oN14nSVhr8PQ+BvBcBQHAhDZfl0bVIiLgvnRXv/dn58XhTm9UXvBpvJpDlwV65QxOA==
+  /@types/yargs/15.0.8:
+    dependencies:
+      '@types/yargs-parser': 15.0.0
+    dev: true
+    resolution:
+      integrity: sha512-b0BYzFUzBpOhPjpl1wtAHU994jBeKF4TKVlT7ssFv44T617XNcPdRoG4AzHLVshLzlrF7i3lTelH7UbuNYV58Q==
   /@typescript-eslint/eslint-plugin/4.4.0_a71b0516f86a95383173f79e74386c73:
     dependencies:
       '@typescript-eslint/experimental-utils': 4.4.0_eslint@7.10.0+typescript@4.0.3
@@ -3757,6 +3771,10 @@ packages:
       node: '>= 10.14.2'
     resolution:
       integrity: sha512-LaYl/ek5mb1VDP1/+jMH2N1Ec4fFUhSYmc8EZqigBgMov/2US8U5l7D3IlOf78e+wARUxPxUpTcybVVzAOu3jg==
+  /jest-expect-message/1.0.2:
+    dev: true
+    resolution:
+      integrity: sha512-WFiXMgwS2lOqQZt1iJMI/hOXpUm32X+ApsuzYcQpW5m16Pv6/Gd9kgC+Q+Q1YVNU04kYcAOv9NXMnjg6kKUy6Q==
   /jest-get-type/25.2.6:
     dev: true
     engines:
@@ -6683,6 +6701,7 @@ specifiers:
   '@rollup/plugin-typescript': ^6.0.0
   '@types/cls-hooked': ^4.3.1
   '@types/express': ^4.17.8
+  '@types/jest-expect-message': ^1.0.2
   '@types/node': ^14.11.4
   '@types/pino': ^6.3.2
   '@types/supertest': ^2.0.10
@@ -6703,6 +6722,7 @@ specifiers:
   husky: ^4.3.0
   hyperid: ^2.0.5
   jest: ^26.5.0
+  jest-expect-message: ^1.0.2
   lint-staged: ^10.4.0
   pino: ^6.7.0
   prettier: ^2.1.2
