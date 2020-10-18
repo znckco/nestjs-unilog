@@ -25,7 +25,7 @@ function getModuleOptions(options: UnilogOptions): ModuleMetadata {
 @Module(getModuleOptions(OPTIONS))
 export class UnilogModule {
   static forRoot(options: Partial<UnilogOptions>): DynamicModule {
-    const config = { options, ...OPTIONS }
+    const config = { ...OPTIONS, ...options }
 
     return {
       ...getModuleOptions(config),
