@@ -16,6 +16,7 @@ describe("UnilogInterceptor", () => {
     _flush: jest.fn(),
   }
   const execution = {
+    getType: jest.fn(),
     switchToHttp: () => ({
       getRequest: jest.fn(),
       getResponse: jest.fn(),

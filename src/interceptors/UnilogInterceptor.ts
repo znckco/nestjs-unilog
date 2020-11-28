@@ -66,6 +66,20 @@ export class UnilogInterceptor implements NestInterceptor {
             ...this.getExitBindings(execution),
             duration,
           })
+
+          if (execution.getType() === "http" && accumulator.trace.length > 0) {
+            const response = execution.switchToHttp().getResponse<any>()
+
+            const value = accumulator.trace
+              .map((item) => `${item.method};dur=${item.duration}`)
+              .join(", ")
+
+            if (response.headersSent === false) { // express
+              response.setHeader("Server-Timing", value)
+            } else if (response.sent === false) { // fastify
+              response.header("Server-Timing", value)
+            }
+          }
         },
       }),
     )

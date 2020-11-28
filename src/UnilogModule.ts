@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 import { DynamicModule, Module, ModuleMetadata } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { createNamespace } from "cls-hooked"

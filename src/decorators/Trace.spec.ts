@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/promise-function-async */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Logger, SetMetadata } from "@nestjs/common"
 import { Reflector } from "@nestjs/core"
 import { from } from "rxjs"

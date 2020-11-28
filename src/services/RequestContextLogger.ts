@@ -15,7 +15,6 @@ import {
   Inject,
   Injectable,
   LoggerService,
-  LogLevel,
   OnApplicationShutdown,
 } from "@nestjs/common"
 import type { Namespace } from "cls-hooked"
@@ -24,11 +23,15 @@ import pino from "pino"
 @Injectable()
 export class RequestContextLogger
   implements LoggerService, OnApplicationShutdown {
-  private readonly pino = pino(this.options.pino, this.options.pinoDest!)
+  private readonly pino =
+    this.options.pinoDest != null
+      ? pino(this.options.pino, this.options.pinoDest)
+      : pino(this.options.pino)
 
   constructor(
     @Inject(NAMESPACE_PROVIDER)
     private readonly namespace: Namespace,
+    
     @Inject(OPTIONS_PROVIDER)
     private readonly options: UnilogOptions,
   ) {}
@@ -36,7 +39,7 @@ export class RequestContextLogger
   /**
    * @private
    */
-  onApplicationShutdown() {
+  onApplicationShutdown(): void {
     this.pino.flush()
   }
 
@@ -68,14 +71,14 @@ export class RequestContextLogger
     }
   }
 
-  setLogLevel(level: pino.LevelWithSilent) {
+  setLogLevel(level: pino.LevelWithSilent): void {
     this.pino.level = level
   }
 
-  extendBindings(bindings: object) {
+  extendBindings(bindings: object): void {
     const accumulator = this.accumulator
 
-    if (accumulator) {
+    if (accumulator != null) {
       Object.assign(accumulator, bindings)
     }
   }
