@@ -71,12 +71,16 @@ export class UnilogInterceptor implements NestInterceptor {
             const response = execution.switchToHttp().getResponse<any>()
 
             const value = accumulator.trace
-              .map((item) => `${item.method};dur=${item.duration}`)
+              .slice()
+              .reverse()
+              .map((item) => `${item.method};dur=${item.duration.toFixed(0)}`)
               .join(", ")
 
-            if (response.headersSent === false) { // express
+            if (response.headersSent === false) {
+              // express
               response.setHeader("Server-Timing", value)
-            } else if (response.sent === false) { // fastify
+            } else if (response.sent === false) {
+              // fastify
               response.header("Server-Timing", value)
             }
           }
