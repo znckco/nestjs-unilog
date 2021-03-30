@@ -5,9 +5,7 @@
   "main": "dist/unilog.js",
   "module": "dist/unilog.esm.js",
   "types": "dist/unilog.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "engines": {
     "node": ">=12.0"
   },
@@ -15,14 +13,14 @@
     "test": "jest --coverage",
     "build": "rollup -c --environment BUILD:production"
   },
-  "keywords": [
-    "nestjs"
-  ],
+  "keywords": ["nestjs"],
   "author": "Rahul Kadyan <hey@znck.me> (https://znck.me)",
   "license": "MIT",
+  "peerDependencies": {
+    "@nestjs/common": "^7.0.0",
+    "@nestjs/core": "^7.0.0"
+  },
   "dependencies": {
-    "@nestjs/common": "^7.4.4",
-    "@nestjs/core": "^7.4.4",
     "cls-hooked": "^4.2.2",
     "hyperid": "^2.0.5",
     "pino": "^6.7.0",
@@ -30,8 +28,10 @@
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
-    "@nestjs/platform-express": "^7.4.4",
-    "@nestjs/testing": "^7.4.4",
+    "@nestjs/common": "7.6.15",
+    "@nestjs/core": "7.6.15",
+    "@nestjs/platform-express": "7.6.15",
+    "@nestjs/testing": "7.6.15",
     "@rollup/plugin-typescript": "^6.0.0",
     "@types/cls-hooked": "^4.3.1",
     "@types/express": "^4.17.8",

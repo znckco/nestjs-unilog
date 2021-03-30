@@ -4,7 +4,9 @@ import { LogQuery } from "./LogQuery"
 import { LogSlowQuery } from "./LogSlowQuery"
 
 export class TypeormLogger implements Logger {
-  private readonly logger = new NestLogger("typeorm")
+  constructor(private readonly logger: NestLogger = new NestLogger()) {
+    logger.setContext("typeorm")
+  }
 
   logQuery(query: string, parameters: any[] = []): void {
     this.writeQuery({ __type__: "query", query, parameters })

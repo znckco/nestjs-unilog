@@ -1,12 +1,13 @@
 import typescript from "@rollup/plugin-typescript"
 import dts from "rollup-plugin-dts"
 import { typescriptPaths } from "rollup-plugin-typescript-paths"
-import { dependencies } from "./package.json"
+import { dependencies, peerDependencies } from "./package.json"
 
 const external = [
   "rxjs/operators",
   "perf_hooks",
   ...Array.from(Object.keys(dependencies)),
+  ...Array.from(Object.keys(peerDependencies)),
 ]
 
 export default [
@@ -27,7 +28,7 @@ export default [
     output: { format: "esm", file: "dist/unilog.d.ts", sourcemap: true },
     plugins: [
       typescriptPaths({
-        transform: (path) => path.replace(/\.js$/, '.ts'),
+        transform: (path) => path.replace(/\.js$/, ".ts"),
       }),
       dts(),
     ],
