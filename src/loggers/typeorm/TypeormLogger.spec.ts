@@ -3,142 +3,119 @@ import { TypeormLogger } from "./TypeormLogger"
 
 describe("TypeormLogger", () => {
   const logs: any[][] = []
+  const logger = {
+    log: (...args: any) => logs.push(args),
+    warn: (...args: any) => logs.push(args),
+    debug: (...args: any) => logs.push(args),
+    verbose: (...args: any) => logs.push(args),
+  } as unknown as Logger
 
   beforeEach(() => {
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest
-      .spyOn(logger, "log")
-      .mockImplementation((...args: any) => logs.push(args))
-    jest
-      .spyOn(logger, "warn")
-      .mockImplementation((...args: any) => logs.push(args))
-    jest
-      .spyOn(logger, "debug")
-      .mockImplementation((...args: any) => logs.push(args))
-    jest
-      .spyOn(logger, "verbose")
-      .mockImplementation((...args: any) => logs.push(args))
-  })
-
-  afterEach(() => {
     logs.length = 0
-    jest.resetAllMocks()
+    Logger.overrideLogger(logger)
   })
 
   test("logQuery()", () => {
-    new TypeormLogger().logQuery("SELECT 1", [1])
+    new TypeormLogger().logQuery("SELECT 1;", [1])
 
     expect(logs).toEqual([
-      [
-        { __type__: "query", query: "SELECT 1", parameters: [1] },
-        "typeorm",
-        false,
-      ],
+      [{ __type__: "query", query: "SELECT 1;", parameters: [1] }, "typeorm"],
     ])
   })
-  
+
   test("logQuery() no params", () => {
-    new TypeormLogger().logQuery("SELECT 1")
+    new TypeormLogger().logQuery("SELECT 1;")
 
     expect(logs).toEqual([
-      [
-        { __type__: "query", query: "SELECT 1", parameters: [] },
-        "typeorm",
-        false,
-      ],
+      [{ __type__: "query", query: "SELECT 1;", parameters: [] }, "typeorm"],
     ])
   })
 
   test("logQueryError()", () => {
-    new TypeormLogger().logQueryError("Error", "SELECT 1", [1])
+    new TypeormLogger().logQueryError("Error", "SELECT 1;", [1])
 
     expect(logs).toEqual([
       [
         {
           __type__: "query",
-          query: "SELECT 1",
+          query: "SELECT 1;",
           parameters: [1],
           error: "Error",
         },
         "typeorm",
-        false,
       ],
     ])
   })
-  
+
   test("logQueryError() no params", () => {
-    new TypeormLogger().logQueryError("Error", "SELECT 1")
+    new TypeormLogger().logQueryError("Error", "SELECT 1;")
 
     expect(logs).toEqual([
       [
         {
           __type__: "query",
-          query: "SELECT 1",
+          query: "SELECT 1;",
           parameters: [],
           error: "Error",
         },
         "typeorm",
-        false,
       ],
     ])
   })
 
   test("logQuerySlow()", () => {
-    new TypeormLogger().logQuerySlow(200, "SELECT 1", [1])
+    new TypeormLogger().logQuerySlow(200, "SELECT 1;", [1])
 
     expect(logs).toEqual([
       [
         {
           __type__: "slow_query",
-          query: "SELECT 1",
+          query: "SELECT 1;",
           parameters: [1],
           duration: 200,
         },
         "typeorm",
-        false,
       ],
     ])
   })
 
   test("logQuerySlow() no params", () => {
-    new TypeormLogger().logQuerySlow(200, "SELECT 1")
+    new TypeormLogger().logQuerySlow(200, "SELECT 1;")
 
     expect(logs).toEqual([
       [
         {
           __type__: "slow_query",
-          query: "SELECT 1",
+          query: "SELECT 1;",
           parameters: [],
           duration: 200,
         },
         "typeorm",
-        false,
       ],
     ])
   })
 
   test("logSchemaBuild()", () => {
-    new TypeormLogger().logSchemaBuild("SELECT 1")
+    new TypeormLogger().logSchemaBuild("SELECT 1;")
 
-    expect(logs).toEqual([["SELECT 1", "typeorm", false]])
+    expect(logs).toEqual([["SELECT 1;", "typeorm"]])
   })
 
   test("logMigration()", () => {
-    new TypeormLogger().logMigration("SELECT 1")
+    new TypeormLogger().logMigration("SELECT 1;")
 
-    expect(logs).toEqual([["SELECT 1", "typeorm", false]])
+    expect(logs).toEqual([["SELECT 1;", "typeorm"]])
   })
-  
+
   test("log()", () => {
     new TypeormLogger().log("log", "hello")
     new TypeormLogger().log("info", "hello")
     new TypeormLogger().log("warn", "hello")
 
     expect(logs).toEqual([
-      ["hello", "typeorm", false],
-      ["hello", "typeorm", false],
-      ["hello", "typeorm", false],
+      ["hello", "typeorm"],
+      ["hello", "typeorm"],
+      ["hello", "typeorm"],
     ])
   })
 })

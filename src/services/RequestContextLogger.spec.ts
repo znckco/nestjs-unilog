@@ -1,7 +1,7 @@
-import { TL_ACCUMULATOR, TL_LOGGER } from "#/constants"
-import { LogTrace } from "#/loggers/trace/LogTrace"
-import { LogQuery } from "#/loggers/typeorm/LogQuery"
-import { LogSlowQuery } from "#/loggers/typeorm/LogSlowQuery"
+import { TL_ACCUMULATOR, TL_LOGGER } from "../constants"
+import { LogTrace } from "../loggers/trace/LogTrace"
+import { LogQuery } from "../loggers/typeorm/LogQuery"
+import { LogSlowQuery } from "../loggers/typeorm/LogSlowQuery"
 import { RequestContextLogger } from "./RequestContextLogger"
 
 describe("RequestContextLogger", () => {

@@ -1,40 +1,43 @@
 import {
-  NAMESPACE_PROVIDER,
-  OPTIONS_PROVIDER,
-  TL_ACCUMULATOR,
-  TL_LOGGER,
-} from "#/constants"
-import { UnilogAccumulator } from "#/interfaces/UnilogAccumulator"
-import { UnilogOptions } from "#/interfaces/UnilogOptions"
-import { LogItem } from "#/loggers/generic/LogItem"
-import { LogMessage } from "#/loggers/generic/LogMessage"
-import { LogTrace } from "#/loggers/trace/LogTrace"
-import { LogQuery } from "#/loggers/typeorm/LogQuery"
-import { LogSlowQuery } from "#/loggers/typeorm/LogSlowQuery"
-import {
   Inject,
   Injectable,
   LoggerService,
-  OnApplicationShutdown,
+  OnApplicationShutdown
 } from "@nestjs/common"
 import type { Namespace } from "cls-hooked"
 import pino from "pino"
+import {
+  NAMESPACE_PROVIDER,
+  OPTIONS_PROVIDER,
+  TL_ACCUMULATOR,
+  TL_LOGGER
+} from "../constants"
+import { UnilogAccumulator } from "../interfaces/UnilogAccumulator"
+import { UnilogOptions } from "../interfaces/UnilogOptions"
+import { LogItem } from "../loggers/generic/LogItem"
+import { LogMessage } from "../loggers/generic/LogMessage"
+import { LogTrace } from "../loggers/trace/LogTrace"
+import { LogQuery } from "../loggers/typeorm/LogQuery"
+import { LogSlowQuery } from "../loggers/typeorm/LogSlowQuery"
 
 @Injectable()
 export class RequestContextLogger
-  implements LoggerService, OnApplicationShutdown {
-  private readonly pino =
-    this.options.pinoDest != null
-      ? pino(this.options.pino, this.options.pinoDest)
-      : pino(this.options.pino)
+  implements LoggerService, OnApplicationShutdown
+{
+  private readonly pino: ReturnType<typeof pino>
 
   constructor(
     @Inject(NAMESPACE_PROVIDER)
     private readonly namespace: Namespace,
-    
+
     @Inject(OPTIONS_PROVIDER)
     private readonly options: UnilogOptions,
-  ) {}
+  ) {
+    this.pino =
+      this.options.pinoDest != null
+        ? pino(this.options.pino, this.options.pinoDest)
+        : pino(this.options.pino)
+  }
 
   /**
    * @private
@@ -144,9 +147,10 @@ export class RequestContextLogger
       }
     } else {
       const logger = this.logger
-      const fn = logger[
-        level === "verbose" ? "trace" : level === "log" ? "info" : level
-      ].bind(logger)
+      const fn =
+        logger[
+          level === "verbose" ? "trace" : level === "log" ? "info" : level
+        ].bind(logger)
       fn({ ...options, message })
     }
   }

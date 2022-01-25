@@ -1,4 +1,4 @@
-import { TL_ACCUMULATOR, TL_LOGGER } from "#/constants"
+import { TL_ACCUMULATOR, TL_LOGGER } from "../constants"
 import { from } from "rxjs"
 import { UnilogInterceptor } from "./UnilogInterceptor"
 
@@ -68,7 +68,6 @@ describe("UnilogInterceptor", () => {
 
     await expect(
       interceptor.intercept(execution as any, call).toPromise(),
-      "should not consume result",
     ).resolves.toBe(42)
 
     expect(logger._flush).toBeCalledTimes(1)
@@ -80,7 +79,6 @@ describe("UnilogInterceptor", () => {
 
     await expect(
       interceptor.intercept(execution as any, call).toPromise(),
-      "should not consume error",
     ).rejects.toThrow()
 
     expect(logger._flush).toBeCalledTimes(1)

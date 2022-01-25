@@ -33,7 +33,9 @@ describe("Unilog", () => {
       imports: [appModule],
       controllers: [ExampleController],
     }).compile()
-    const app = moduleRef.createNestApplication(undefined, { logger: true })
+    const app = moduleRef.createNestApplication(undefined, {
+      logger: ["debug", "error", "log", "verbose", "warn"],
+    })
 
     await app.init()
 
@@ -55,9 +57,11 @@ describe("Unilog", () => {
     await request(app.getHttpServer()).get("/test").expect(200)
     await request(app.getHttpServer()).get("/test").expect(200)
     await app.close()
-    expect(write).toHaveBeenCalledWith(expect.stringMatching(/ExampleController.test/))
+    expect(write).toHaveBeenCalledWith(
+      expect.stringMatching(/ExampleController.test/),
+    )
   })
-  
+
   test("use module", async () => {
     const write = jest
       .spyOn(process.stdout, "write")

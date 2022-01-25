@@ -41,8 +41,14 @@ describe("@Trace()", () => {
     withArgs(...args: any) {}
   }
 
-  afterEach(() => {
-    Logger.overrideLogger(console)
+  const logs: any[][] = []
+  const logger = {
+    log: (...args: any[]) => logs.push(args),
+  } as unknown as Logger
+
+  beforeEach(() => {
+    logs.length = 0
+    Logger.overrideLogger(logger)
   })
 
   test("should preserve method annotations", () => {
@@ -61,11 +67,6 @@ describe("@Trace()", () => {
   })
 
   test("trace sync method", () => {
-    const logs: any[][] = []
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest.spyOn(logger, "log").mockImplementation((...args) => logs.push(args))
-
     const instance = new Example()
 
     instance.simple()
@@ -80,17 +81,11 @@ describe("@Trace()", () => {
           method: "Example.simple",
         },
         "trace",
-        false,
       ],
     ])
   })
 
   test("trace async method", async () => {
-    const logs: any[][] = []
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest.spyOn(logger, "log").mockImplementation((...args) => logs.push(args))
-
     const instance = new Example()
 
     await instance.promise()
@@ -105,17 +100,11 @@ describe("@Trace()", () => {
           method: "Example.promise",
         },
         "trace",
-        false,
       ],
     ])
   })
 
   test("trace observable method", async () => {
-    const logs: any[][] = []
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest.spyOn(logger, "log").mockImplementation((...args) => logs.push(args))
-
     const instance = new Example()
 
     await instance.observable().toPromise()
@@ -130,17 +119,11 @@ describe("@Trace()", () => {
           method: "Example.observable",
         },
         "trace",
-        false,
       ],
     ])
   })
 
   test("trace with args", async () => {
-    const logs: any[][] = []
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest.spyOn(logger, "log").mockImplementation((...args) => logs.push(args))
-
     const instance = new Example()
 
     instance.withArgs("foo", 1, "bar")
@@ -155,17 +138,11 @@ describe("@Trace()", () => {
           method: "Example.withArgs",
         },
         "trace",
-        false,
       ],
     ])
   })
 
   test("trace getters", async () => {
-    const logs: any[][] = []
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest.spyOn(logger, "log").mockImplementation((...args) => logs.push(args))
-
     const instance = new Example()
 
     instance.foo
@@ -174,11 +151,6 @@ describe("@Trace()", () => {
   })
 
   test("trace recursively", async () => {
-    const logs: any[][] = []
-    const logger = new Logger()
-    Logger.overrideLogger(logger)
-    jest.spyOn(logger, "log").mockImplementation((...args) => logs.push(args))
-
     const instance = new Example()
 
     await instance.deep()
@@ -193,7 +165,6 @@ describe("@Trace()", () => {
           method: "Example.simple",
         },
         "trace",
-        false,
       ],
       [
         {
@@ -203,7 +174,6 @@ describe("@Trace()", () => {
           method: "Example.promise",
         },
         "trace",
-        false,
       ],
       [
         {
@@ -213,7 +183,6 @@ describe("@Trace()", () => {
           method: "Example.deep",
         },
         "trace",
-        false,
       ],
     ])
   })
