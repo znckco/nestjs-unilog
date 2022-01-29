@@ -2,7 +2,7 @@ import {
   Inject,
   Injectable,
   LoggerService,
-  OnApplicationShutdown
+  OnApplicationShutdown,
 } from "@nestjs/common"
 import type { Namespace } from "cls-hooked"
 import pino from "pino"
@@ -10,7 +10,7 @@ import {
   NAMESPACE_PROVIDER,
   OPTIONS_PROVIDER,
   TL_ACCUMULATOR,
-  TL_LOGGER
+  TL_LOGGER,
 } from "../constants"
 import { UnilogAccumulator } from "../interfaces/UnilogAccumulator"
 import { UnilogOptions } from "../interfaces/UnilogOptions"
@@ -64,7 +64,7 @@ export class RequestContextLogger
   /**
    * @private
    */
-  _createRequestAccumulator(bindings: object): UnilogAccumulator {
+  _createRequestAccumulator(bindings: Record<string, any>): UnilogAccumulator {
     return {
       ...bindings,
       startedAt: Date.now(),
@@ -89,8 +89,12 @@ export class RequestContextLogger
   /**
    * @private
    */
-  _flush(message: any): void {
-    this.pino.info(message)
+  _flush(message: any, kind: "error" | "info" = "info"): void {
+    if (kind === "info") {
+      this.pino.info(message)
+    } else {
+      this.pino.error(message)
+    }
   }
 
   error(message: any, trace?: string, context?: string): void {
@@ -121,38 +125,56 @@ export class RequestContextLogger
     const accumulator = this.accumulator
 
     if (accumulator != null) {
-      if (this.isLogItem(message)) {
-        switch (message.__type__) {
-          case "query":
-            accumulator.typeorm.query.push(message as LogQuery)
-            break
-          case "slow_query":
-            accumulator.typeorm.slowQuery.push(message as LogSlowQuery)
-            break
-          case "trace":
-            accumulator.trace.push(message as LogTrace)
-            break
-
-          default:
-            accumulator.messages.push(message as LogMessage)
-            break
+      if (this.options.groupLogsByRequest === false) {
+        if (this.isLogItem(message) && message.__type__ === "trace") {
+          accumulator.trace.push(message as LogTrace)
         }
+
+        const { typeorm, trace, messages, startedAt, ...bindings } = accumulator
+        this._writeLog(level, options, message, bindings)
       } else {
-        accumulator.messages.push({
-          __type__: level,
-          message,
-          ...options,
-          diff: Date.now() - accumulator.startedAt,
-        })
+        if (this.isLogItem(message)) {
+          switch (message.__type__) {
+            case "query":
+              accumulator.typeorm.query.push(message as LogQuery)
+              break
+            case "slow_query":
+              accumulator.typeorm.slowQuery.push(message as LogSlowQuery)
+              break
+            case "trace":
+              accumulator.trace.push(message as LogTrace)
+              break
+
+            default:
+              accumulator.messages.push(message as LogMessage)
+              break
+          }
+        } else {
+          accumulator.messages.push({
+            __type__: level,
+            message,
+            ...options,
+            diff: Date.now() - accumulator.startedAt,
+          })
+        }
       }
     } else {
-      const logger = this.logger
-      const fn =
-        logger[
-          level === "verbose" ? "trace" : level === "log" ? "info" : level
-        ].bind(logger)
-      fn({ ...options, message })
+      this._writeLog(level, options, message)
     }
+  }
+
+  private _writeLog(
+    level: string,
+    options: { context?: string | undefined; trace?: string | undefined },
+    message: unknown,
+    bindings?: Record<string, any>,
+  ) {
+    const logger = this.logger
+    const fn =
+      logger[
+        level === "verbose" ? "trace" : level === "log" ? "info" : level
+      ].bind(logger)
+    fn({ ...options, ...bindings, message })
   }
 
   private isLogItem(message: unknown): message is LogItem<string> {

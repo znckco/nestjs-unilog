@@ -46,16 +46,19 @@ export class UnilogInterceptor implements NestInterceptor {
         error: (exception) => {
           const duration = performance.now() - startedAt
           this.namespace.exit(context)
-          this.logger._flush({
-            ...bindings,
-            ...accumulator,
-            ...this.getExitBindings(execution),
-            duration,
-            exception: {
-              message: exception.message,
-              stack: exception.stack,
+          this.logger._flush(
+            {
+              ...bindings,
+              ...accumulator,
+              ...this.getExitBindings(execution),
+              duration,
+              exception: {
+                message: exception.message,
+                stack: exception.stack,
+              },
             },
-          })
+            "error",
+          )
         },
         complete: () => {
           const duration = performance.now() - startedAt
