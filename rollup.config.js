@@ -6,6 +6,7 @@ import { dependencies, peerDependencies } from "./package.json"
 const external = [
   "rxjs/operators",
   "perf_hooks",
+  "crypto",
   ...Array.from(Object.keys(dependencies)),
   ...Array.from(Object.keys(peerDependencies)),
 ]

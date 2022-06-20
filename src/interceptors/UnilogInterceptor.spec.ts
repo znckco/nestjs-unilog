@@ -1,4 +1,4 @@
-import { TL_ACCUMULATOR, TL_LOGGER } from "../constants"
+import { OPTIONS, TL_ACCUMULATOR, TL_LOGGER } from "../constants"
 import { from } from "rxjs"
 import { UnilogInterceptor } from "./UnilogInterceptor"
 
@@ -36,7 +36,11 @@ describe("UnilogInterceptor", () => {
 
   test("sets request scope", async () => {
     const scope = { [Symbol.for("test")]: true }
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
     namespace.createContext.mockImplementation(() => scope)
     await interceptor.intercept(execution as any, call).toPromise()
 
@@ -52,7 +56,11 @@ describe("UnilogInterceptor", () => {
     logger._createRequestAccumulator.mockImplementation(
       () => requestAccumulator,
     )
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
 
     await interceptor.intercept(execution as any, call).toPromise()
 
@@ -64,7 +72,11 @@ describe("UnilogInterceptor", () => {
   })
 
   test("flushes accumulated logs", async () => {
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
 
     await expect(
       interceptor.intercept(execution as any, call).toPromise(),
@@ -74,7 +86,11 @@ describe("UnilogInterceptor", () => {
   })
 
   test("flushes on error", async () => {
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
     const call = { handle: () => from(Promise.reject(new Error("some error"))) }
 
     await expect(
@@ -89,6 +105,7 @@ describe("UnilogInterceptor", () => {
           stack: expect.any(String),
         },
       }),
+      "error",
     )
   })
 
@@ -100,7 +117,11 @@ describe("UnilogInterceptor", () => {
 
     jest.spyOn(execution, "switchToHttp").mockImplementation(() => http)
 
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
 
     await interceptor.intercept(execution as any, call).toPromise()
 
@@ -123,7 +144,11 @@ describe("UnilogInterceptor", () => {
 
     jest.spyOn(execution, "switchToHttp").mockImplementation(() => http)
 
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
 
     await interceptor.intercept(execution as any, call).toPromise()
 
@@ -150,7 +175,11 @@ describe("UnilogInterceptor", () => {
     jest.spyOn(execution, "switchToHttp").mockImplementation(() => http)
     jest.spyOn(execution, "switchToRpc").mockImplementation(() => rpc)
 
-    const interceptor = new UnilogInterceptor(namespace as any, logger as any)
+    const interceptor = new UnilogInterceptor(
+      namespace as any,
+      OPTIONS,
+      logger as any,
+    )
 
     await interceptor.intercept(execution as any, call).toPromise()
 
