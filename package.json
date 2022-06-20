@@ -1,6 +1,6 @@
 {
   "name": "nestjs-unilog",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "",
   "main": "dist/unilog.js",
   "module": "dist/unilog.esm.js",
