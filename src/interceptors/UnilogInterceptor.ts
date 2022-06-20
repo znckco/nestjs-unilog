@@ -1,4 +1,9 @@
-import { NAMESPACE_PROVIDER, TL_ACCUMULATOR, TL_LOGGER } from "../constants"
+import {
+  NAMESPACE_PROVIDER,
+  OPTIONS_PROVIDER,
+  TL_ACCUMULATOR,
+  TL_LOGGER,
+} from "../constants"
 import { RequestContextLogger } from "../services/RequestContextLogger"
 import {
   CallHandler,
@@ -14,6 +19,7 @@ import hyper from "hyperid"
 import { performance } from "perf_hooks"
 import type { Observable } from "rxjs"
 import { tap } from "rxjs/operators"
+import { UnilogOptions } from "../interfaces/UnilogOptions"
 
 @Injectable()
 export class UnilogInterceptor implements NestInterceptor {
@@ -22,6 +28,10 @@ export class UnilogInterceptor implements NestInterceptor {
   constructor(
     @Inject(NAMESPACE_PROVIDER)
     private readonly namespace: Namespace,
+
+    @Inject(OPTIONS_PROVIDER)
+    private readonly options: UnilogOptions,
+
     private readonly logger: RequestContextLogger,
   ) {}
 
@@ -70,14 +80,21 @@ export class UnilogInterceptor implements NestInterceptor {
             duration,
           })
 
-          if (execution.getType() === "http" && accumulator.trace.length > 0) {
+          if (
+            this.options.reportServerTiming === true &&
+            execution.getType() === "http"
+          ) {
             const response = execution.switchToHttp().getResponse<any>()
 
-            const value = accumulator.trace
-              .slice()
-              .reverse()
-              .map((item) => `${item.method};dur=${item.duration.toFixed(0)}`)
-              .join(", ")
+            const value = [
+              ...accumulator.trace
+                .slice()
+                .reverse()
+                .map(
+                  (item) => `${item.method};dur=${item.duration.toFixed(0)}`,
+                ),
+              `request;desc="${bindings.id}";dur=${duration}`,
+            ].join(", ")
 
             if (response.headersSent === false) {
               // express
@@ -92,7 +109,7 @@ export class UnilogInterceptor implements NestInterceptor {
     )
   }
 
-  private getEnterBindings(execution: ExecutionContext): object {
+  private getEnterBindings(execution: ExecutionContext): Record<string, any> {
     const bindings: Record<string, any> = { id: this.nextId() }
     if (execution.switchToHttp().getRequest() != null) {
       Object.assign(

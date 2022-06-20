@@ -3,11 +3,17 @@ import { performance } from "perf_hooks"
 import { isObservable } from "rxjs"
 import { tap } from "rxjs/operators"
 
-export function Trace(options?: { args: boolean }): MethodDecorator {
+export function Trace(
+  options: {
+    args?: boolean
+    name?: string
+  } = {},
+): MethodDecorator {
   return (target, methodName, descriptor) => {
     if (typeof descriptor.value === "function") {
-      const method = `${target.constructor.name}.${methodName.toString()}`
-      const shouldIncludeArgs = options?.args === true
+      const method =
+        options.name ?? `${target.constructor.name}.${methodName.toString()}`
+      const shouldIncludeArgs = options.args === true
       const logger = new Logger("trace")
       const end = (startedAt: number, params: any[]): void => {
         const duration = performance.now() - startedAt

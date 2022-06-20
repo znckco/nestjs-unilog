@@ -4,4 +4,5 @@ export interface UnilogOptions {
   pino: LoggerOptions
   pinoDest?: DestinationStream
   groupLogsByRequest?: boolean
+  reportServerTiming?: boolean
 }

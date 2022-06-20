@@ -5,6 +5,7 @@ import {
   OnApplicationShutdown,
 } from "@nestjs/common"
 import type { Namespace } from "cls-hooked"
+import { createHash } from "crypto"
 import pino from "pino"
 import {
   NAMESPACE_PROVIDER,
@@ -126,8 +127,24 @@ export class RequestContextLogger
 
     if (accumulator != null) {
       if (this.options.groupLogsByRequest === false) {
-        if (this.isLogItem(message) && message.__type__ === "trace") {
-          accumulator.trace.push(message as LogTrace)
+        if (this.isLogItem(message)) {
+          if (message.__type__ === "trace") {
+            accumulator.trace.push(message as LogTrace)
+          } else if (message.__type__ === "show_query") {
+            const query = message as LogSlowQuery
+
+            query.queryId = createHash("sha256")
+              .update(query.query)
+              .digest("hex")
+              .slice(0, 8)
+
+            accumulator.trace.push({
+              __type__: "trace",
+              method: "db",
+              description: `query=${query.queryId}`,
+              duration: query.duration,
+            })
+          }
         }
 
         const { typeorm, trace, messages, startedAt, ...bindings } = accumulator
